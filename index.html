@@ -1,7 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Rangi</title>
+
+<style>
+  body { 
+    font-family: Arial; 
+    background:#111; 
+    color:#fff; 
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    margin:0;
+  }
+  .container { 
+    width:400px; 
+    text-align:center; 
+    background:#1a1a1a;
+    padding:20px;
+    border-radius:15px;
+  }
+  .bar { width:100%; height:30px; background:#333; border-radius:10px; overflow:hidden; }
+  .progress { height:100%; width:0%; background:lime; }
+  .history { margin-top:15px; max-height:120px; overflow-y:auto; background:#222; padding:10px; border-radius:10px; }
+  .entry { margin-bottom:8px; }
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+
+<body>
+<div class="container">
+
+  <h2 id="points">0</h2>
+  <h2 id="rank"></h2>
+
+  <div class="bar">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div id="login">
+    <button onclick="login()">Zaloguj</button>
+  </div>
+
+  <div id="adminPanel" style="display:none;">
+    <input type="number" id="amount" placeholder="Ile punktów">
+    <br>
+    <button onclick="addPoints()">Dodaj</button>
+    <button onclick="removePoints()">Odejmij</button>
+    <br>
+    <button onclick="resetAll()">RESET</button>
+  </div>
+
+  <div class="history" id="history"></div>
+
+</div>
 
 <script>
-const supabaseClient = supabase.createClient("https://wkngyhgtnevatwlrncja.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indrbmd5aGd0bmV2YXR3bHJuY2phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDQyNDIsImV4cCI6MjA4OTc4MDI0Mn0.02jcwqjPo7gkeEzMeEUQf3fZah8EFtHkTIAC-Ibxcfc");
+const supabaseClient = supabase.createClient(
+  "https://wkngyhgtnevatwlrncja.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+);
 
 let points = 0;
 let isAdmin = false;
@@ -40,12 +101,9 @@ async function login(){
     isAdmin = true;
     document.getElementById("adminPanel").style.display = "block";
     document.getElementById("login").style.display = "none";
-  } else {
-    alert("Błąd logowania");
   }
 }
 
-// 🔥 POBIERANIE
 async function loadData(){
   let { data } = await supabaseClient.from('points').select('*').limit(1);
 
@@ -55,14 +113,10 @@ async function loadData(){
   }
 }
 
-// 🔥 ZAPIS
 async function saveData(){
   await supabaseClient
     .from('points')
-    .update({
-      value: points,
-      history: history
-    })
+    .update({ value: points, history: history })
     .eq('id', 1);
 }
 
@@ -73,17 +127,15 @@ function addHistory(type, value){
 
 function renderHistory(){
   const div = document.getElementById("history");
-  div.innerHTML = "<b>Historia:</b><br>";
+  div.innerHTML = "";
 
   history.slice(-10).reverse().forEach(entry => {
     let color = entry.type === "add" ? "lime" : "red";
     let sign = entry.type === "add" ? "+" : "-";
 
-    div.innerHTML += `
-      <div class="entry" style="color:${color}">
-        ${entry.time} ${sign}${entry.value}
-      </div>
-    `;
+    div.innerHTML += `<div class="entry" style="color:${color}">
+      ${entry.time} ${sign}${entry.value}
+    </div>`;
   });
 }
 
@@ -93,11 +145,10 @@ function getRank(p) {
 
 function updateUI() {
   document.getElementById("points").innerText = points;
-
-  const rank = getRank(points);
-  document.getElementById("rank").innerText = rank.name;
+  document.getElementById("rank").innerText = getRank(points).name;
 
   const progress = document.getElementById("progress");
+  const rank = getRank(points);
   const percent = ((points - rank.min) / (rank.max - rank.min)) * 100;
   progress.style.width = percent + "%";
 
@@ -124,13 +175,15 @@ function removePoints() {
 
 function resetAll(){
   if(!isAdmin) return;
-  if(confirm("Na pewno reset?")){
-    points = 0;
-    history = [];
-    updateUI();
-  }
+  points = 0;
+  history = [];
+  updateUI();
 }
 
-// START
-loadData().then(updateUI);
+window.onload = () => {
+  loadData().then(updateUI);
+};
 </script>
+
+</body>
+</html>
