@@ -61,7 +61,8 @@
 <script>
 const supabaseClient = supabase.createClient(
   "https://wkngyhgtnevatwlrncja.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indrbmd5aGd0bmV2YXR3bHJuY2phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDQyNDIsImV4cCI6MjA4OTc4MDI0Mn0.02jcwqjPo7gkeEzMeEUQf3fZah8EFtHkTIAC-Ibxcfc"
+
 );
 
 let points = 0;
@@ -93,15 +94,21 @@ async function login(){
   const email = prompt("Email");
   const password = prompt("Hasło");
 
-  const { error } = await supabaseClient.auth.signInWithPassword({
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
     email, password
   });
 
-  if(!error){
-    isAdmin = true;
-    document.getElementById("adminPanel").style.display = "block";
-    document.getElementById("login").style.display = "none";
+  if(error){
+    alert("Błąd: " + error.message);
+    return;
   }
+
+  isAdmin = true;
+  alert("Zalogowano!");
+
+  document.getElementById("adminPanel").style.display = "block";
+  document.getElementById("login").style.display = "none";
+
 }
 
 async function loadData(){
