@@ -35,6 +35,10 @@
     height: 80px;
     z-index: 999;
   }
+
+  #login {
+    display: none !important;
+  }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -53,7 +57,7 @@
     <div class="progress" id="progress"></div>
   </div>
 
-  <div id="login" style="display:none;">
+  <div id="login">
     <button onclick="login()">Zaloguj</button>
   </div>
 
@@ -74,7 +78,6 @@
 const supabaseClient = supabase.createClient(
   "https://wkngyhgtnevatwlrncja.supabase.co",
  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indrbmd5aGd0bmV2YXR3bHJuY2phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDQyNDIsImV4cCI6MjA4OTc4MDI0Mn0.02jcwqjPo7gkeEzMeEUQf3fZah8EFtHkTIAC-Ibxcfc"
-
 );
 
 let points = 0;
@@ -230,13 +233,10 @@ supabaseClient
   .subscribe();
 
 window.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("login").style.display = "none";
-
   document.getElementById("secretZone").addEventListener("click", () => {
     document.getElementById("login").style.display = "block";
   });
 });
-
 </script>
 
 </body>
