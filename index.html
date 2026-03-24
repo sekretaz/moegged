@@ -26,12 +26,24 @@
   .progress { height:100%; width:0%; background:lime; }
   .history { margin-top:15px; max-height:120px; overflow-y:auto; background:#222; padding:10px; border-radius:10px; }
   .entry { margin-bottom:8px; }
+
+  #secretZone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    z-index: 999;
+  }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 
 <body>
+
+<div id="secretZone"></div>
+
 <div class="container">
 
   <h2 id="points">0</h2>
@@ -41,7 +53,7 @@
     <div class="progress" id="progress"></div>
   </div>
 
-  <div id="login">
+  <div id="login" style="display:none;">
     <button onclick="login()">Zaloguj</button>
   </div>
 
@@ -61,7 +73,7 @@
 <script>
 const supabaseClient = supabase.createClient(
   "https://wkngyhgtnevatwlrncja.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indrbmd5aGd0bmV2YXR3bHJuY2phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDQyNDIsImV4cCI6MjA4OTc4MDI0Mn0.02jcwqjPo7gkeEzMeEUQf3fZah8EFtHkTIAC-Ibxcfc"
+ "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indrbmd5aGd0bmV2YXR3bHJuY2phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDQyNDIsImV4cCI6MjA4OTc4MDI0Mn0.02jcwqjPo7gkeEzMeEUQf3fZah8EFtHkTIAC-Ibxcfc"
 
 );
 
@@ -77,13 +89,13 @@ const ranks = [
   {name:"Sub 4", min:200, max:249},
   {name:"Sub 5", min:250, max:399},
   {name:"LLTN", min:400, max:499},
-  {name:"MLTN", min:500, max:599},
+  {name:"LTN", min:500, max:599},
   {name:"HLTN", min:600, max:699},
   {name:"LMTN", min:700, max:799},
-  {name:"MMTN", min:800, max:899},
+  {name:"MTN", min:800, max:899},
   {name:"HMTN", min:900, max:999},
   {name:"LHTN", min:1000, max:1199},
-  {name:"MHTN", min:1100, max:1299},
+  {name:"HTN", min:1100, max:1299},
   {name:"HHTN", min:1300, max:1499},
   {name:"Chad Lite", min:1500, max:1799},
   {name:"Chad", min:1800, max:1999},
@@ -94,7 +106,7 @@ async function login(){
   const email = prompt("Email");
   const password = prompt("Hasło");
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
+  const { error } = await supabaseClient.auth.signInWithPassword({
     email, password
   });
 
@@ -108,7 +120,6 @@ async function login(){
 
   document.getElementById("adminPanel").style.display = "block";
   document.getElementById("login").style.display = "none";
-
 }
 
 async function loadData(){
@@ -121,7 +132,7 @@ async function loadData(){
 }
 
 async function saveData(){
-  if(!isAdmin) return; //
+  if(!isAdmin) return;
 
   await supabaseClient
     .from('points')
@@ -167,7 +178,7 @@ function updateUI() {
 async function addPoints() {
   if(!isAdmin) return;
 
-  await loadData(); //
+  await loadData();
 
   const val = parseInt(document.getElementById("amount").value) || 0;
   points += val;
@@ -181,7 +192,7 @@ async function addPoints() {
 async function removePoints() {
   if(!isAdmin) return;
 
-  await loadData(); //
+  await loadData();
 
   const val = parseInt(document.getElementById("amount").value) || 0;
   points -= val;
@@ -197,13 +208,9 @@ function resetAll(){
   if(!isAdmin) return;
   points = 0;
   history = [];
-  saveData(); 
+  saveData();
   updateUI();
 }
-
-window.onload = () => {
-  loadData().then(updateUI);
-};
 
 window.onload = () => {
   loadData().then(updateUI);
@@ -222,7 +229,9 @@ supabaseClient
   )
   .subscribe();
 
-
+document.getElementById("secretZone").addEventListener("click", () => {
+  document.getElementById("login").style.display = "block";
+});
 </script>
 
 </body>
