@@ -229,9 +229,14 @@ supabaseClient
   )
   .subscribe();
 
-document.getElementById("secretZone").addEventListener("click", () => {
-  document.getElementById("login").style.display = "block";
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("login").style.display = "none";
+
+  document.getElementById("secretZone").addEventListener("click", () => {
+    document.getElementById("login").style.display = "block";
+  });
 });
+
 </script>
 
 </body>
