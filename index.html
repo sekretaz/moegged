@@ -159,7 +159,6 @@ function updateUI() {
   const percent = ((points - rank.min) / (rank.max - rank.min)) * 100;
   progress.style.width = percent + "%";
 
-  saveData();
   renderHistory();
 }
 
@@ -168,6 +167,7 @@ function addPoints() {
   const val = parseInt(document.getElementById("amount").value) || 0;
   points += val;
   addHistory("add", val);
+  saveData();
   updateUI();
 }
 
@@ -177,6 +177,7 @@ function removePoints() {
   points -= val;
   if(points < 0) points = 0;
   addHistory("remove", val);
+  saveData();
   updateUI();
 }
 
@@ -184,6 +185,7 @@ function resetAll(){
   if(!isAdmin) return;
   points = 0;
   history = [];
+  saveData(); 
   updateUI();
 }
 
