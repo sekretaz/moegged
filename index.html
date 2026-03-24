@@ -190,6 +190,25 @@ function resetAll(){
 window.onload = () => {
   loadData().then(updateUI);
 };
+
+window.onload = () => {
+  loadData().then(updateUI);
+};
+
+supabaseClient
+  .channel('points-channel')
+  .on(
+    'postgres_changes',
+    { event: 'UPDATE', schema: 'public', table: 'points' },
+    payload => {
+      points = payload.new.value;
+      history = payload.new.history || [];
+      updateUI();
+    }
+  )
+  .subscribe();
+
+
 </script>
 
 </body>
