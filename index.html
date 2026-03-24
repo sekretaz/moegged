@@ -77,13 +77,13 @@ const ranks = [
   {name:"Sub 4", min:200, max:249},
   {name:"Sub 5", min:250, max:399},
   {name:"LLTN", min:400, max:499},
-  {name:"LMTN", min:500, max:599},
-  {name:"LHTN", min:600, max:699},
-  {name:"MLTN", min:700, max:799},
+  {name:"MLTN", min:500, max:599},
+  {name:"HLTN", min:600, max:699},
+  {name:"LMTN", min:700, max:799},
   {name:"MMTN", min:800, max:899},
-  {name:"MHTN", min:900, max:999},
-  {name:"HLTN", min:1000, max:1199},
-  {name:"HMTN", min:1100, max:1299},
+  {name:"HMTN", min:900, max:999},
+  {name:"LHTN", min:1000, max:1199},
+  {name:"MHTN", min:1100, max:1299},
   {name:"HHTN", min:1300, max:1499},
   {name:"Chad Lite", min:1500, max:1799},
   {name:"Chad", min:1800, max:1999},
@@ -121,6 +121,8 @@ async function loadData(){
 }
 
 async function saveData(){
+  if(!isAdmin) return; //
+
   await supabaseClient
     .from('points')
     .update({ value: points, history: history })
@@ -162,22 +164,32 @@ function updateUI() {
   renderHistory();
 }
 
-function addPoints() {
+async function addPoints() {
   if(!isAdmin) return;
+
+  await loadData(); //
+
   const val = parseInt(document.getElementById("amount").value) || 0;
   points += val;
+
   addHistory("add", val);
-  saveData();
+
+  await saveData();
   updateUI();
 }
 
-function removePoints() {
+async function removePoints() {
   if(!isAdmin) return;
+
+  await loadData(); //
+
   const val = parseInt(document.getElementById("amount").value) || 0;
   points -= val;
   if(points < 0) points = 0;
+
   addHistory("remove", val);
-  saveData();
+
+  await saveData();
   updateUI();
 }
 
